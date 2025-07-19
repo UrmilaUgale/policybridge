@@ -1,0 +1,231 @@
+<!-- MultipleFiles/search.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Patient Record</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f0f4f8;
+            padding: 40px;
+            text-align: center;
+        }
+
+/* Background Image Overlay - Consider a subtle medical pattern or abstract image */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('./images/search.jpg') no-repeat center center; /* Updated background image */
+            background-size: cover;
+            opacity: 0.50; /* Even more subtle blend */
+            z-index: -1;
+        }
+
+
+        h1 {
+            color: #2e86ab;
+            margin-bottom: 30px;
+        }
+        .search-container {
+            max-width: 500px;
+            margin: auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid #dce3e9;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333333;
+            font-weight: 600;
+        }
+        input[type="text"],
+        input[type="tel"] {
+            width: calc(100% - 22px); /* Adjust for padding and border */
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #dce3e9;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #2e86ab;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #276f8d;
+        }
+        #searchResults {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #dce3e9;
+            border-radius: 10px;
+            background-color: #e9f5f9;
+            text-align: left;
+            display: none; /* Hidden by default */
+        }
+        #searchResults p {
+            margin-bottom: 10px;
+        }
+        #searchResults strong {
+            color: #2e86ab;
+        }
+        .download-link {
+            margin-left: 10px;
+            color: #2e86ab;
+            text-decoration: none;
+        }
+        .download-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<h1>Search Patient Record</h1>
+
+<div class="search-container">
+    <label for="searchAadhar">Search by Aadhar:</label>
+    <input type="text" id="searchAadhar" placeholder="Enter Aadhar Number">
+
+    <label for="searchPan">Search by PAN:</label>
+    <input type="text" id="searchPan" placeholder="Enter PAN Number">
+
+    <label for="searchPhone">Search by Phone Number:</label>
+    <input type="tel" id="searchPhone" placeholder="Enter Phone Number">
+
+    <label for="searchId">Search by Reference ID:</label>
+    <input type="text" id="searchId" placeholder="Enter Reference ID">
+
+    <button onclick="searchRecord()">Search</button>
+</div>
+
+<div id="searchResults">
+    <h2>Search Results:</h2>
+    <p><strong>Patient Name:</strong> <span id="resultPatientName"></span></p>
+    <p><strong>Status:</strong> <span id="resultStatus"></span></p>
+    <p><strong>Admin Comments:</strong> <span id="resultAdminComments"></span></p>
+    <!-- Add this new line for Insurance Company Comment -->
+    <p><strong>Insurance Company Comment:</strong> <span id="resultInsuranceCompanyComment"></span></p>
+    <p><strong>Aadhar:</strong> <span id="resultAadhar"></span></p>
+    <p><strong>PAN:</strong> <span id="resultPan"></span></p>
+    <p><strong>Phone:</strong> <span id="resultPhone"></span></p>
+    <p><strong>Reference ID:</strong> <span id="resultId"></span></p>
+    <p id="aadharDownloadSection" style="display:none;">
+        <strong>Aadhar Card:</strong> <span id="aadharFilename"></span>
+        <a href="#" id="downloadAadharLink" class="download-link" target="_blank">Download</a>
+    </p>
+    <p id="prescriptionDownloadSection" style="display:none;">
+        <strong>Doctor's Prescription:</strong> <span id="prescriptionFilename"></span>
+        <a href="#" id="downloadPrescriptionLink" class="download-link" target="_blank">Download</a>
+    </p>
+    <p id="insuranceDownloadSection" style="display:none;">
+        <strong>Insurance Policy:</strong> <span id="insuranceFilename"></span>
+        <a href="#" id="downloadInsuranceLink" class="download-link" target="_blank">Download</a>
+    </p>
+</div>
+
+<script>
+        async function searchRecord() {
+            const aadhar = document.getElementById('searchAadhar').value;
+            const pan = document.getElementById('searchPan').value;
+            const phone = document.getElementById('searchPhone').value;
+            const id = document.getElementById('searchId').value;
+            const searchResultsDiv = document.getElementById('searchResults');
+
+            // Clear previous results and hide download sections
+            searchResultsDiv.style.display = 'none';
+            document.getElementById('resultPatientName').innerText = '';
+            document.getElementById('resultStatus').innerText = '';
+            document.getElementById('resultAdminComments').innerText = '';
+            document.getElementById('resultInsuranceCompanyComment').innerText = ''; // Clear new field
+            document.getElementById('resultAadhar').innerText = '';
+            document.getElementById('resultPan').innerText = '';
+            document.getElementById('resultPhone').innerText = '';
+            document.getElementById('resultId').innerText = '';
+            document.getElementById('aadharDownloadSection').style.display = 'none';
+            document.getElementById('prescriptionDownloadSection').style.display = 'none';
+            document.getElementById('insuranceDownloadSection').style.display = 'none';
+            document.getElementById('aadharFilename').innerText = '';
+            document.getElementById('prescriptionFilename').innerText = '';
+            document.getElementById('insuranceFilename').innerText = '';
+
+
+            let queryParams = [];
+            if (aadhar) queryParams.push(`aadhar=${aadhar}`);
+            if (pan) queryParams.push(`pan=${pan}`);
+            if (phone) queryParams.push(`phone=${phone}`);
+            if (id) queryParams.push(`id=${id}`);
+
+            if (queryParams.length === 0) {
+                alert('Please enter at least one search parameter.');
+                return;
+            }
+
+            const queryString = queryParams.join('&');
+
+            try {
+                const response = await fetch(`/searchPatient?${queryString}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data) {
+                        document.getElementById('resultPatientName').innerText = data.patientName || 'N/A';
+                        document.getElementById('resultStatus').innerText = data.status || 'N/A';
+                        document.getElementById('resultAdminComments').innerText = data.adminComments || 'No comments yet.';
+                        // Set the value for the new field
+                        document.getElementById('resultInsuranceCompanyComment').innerText = data.insuranceCompanyComment || 'No comments yet.';
+                        document.getElementById('resultAadhar').innerText = data.aadhar || 'N/A';
+                        document.getElementById('resultPan').innerText = data.pan || 'N/A';
+                        document.getElementById('resultPhone').innerText = data.phone || 'N/A';
+                        document.getElementById('resultId').innerText = data.id || 'N/A';
+
+                        // Handle Aadhar Card Download Link
+                        if (data.aadharCardFilename && data.id) {
+                            document.getElementById('aadharFilename').innerText = data.aadharCardFilename;
+                            document.getElementById('downloadAadharLink').href = `/downloadFile/${data.id}/aadhar`;
+                            document.getElementById('aadharDownloadSection').style.display = 'block';
+                        }
+
+                        // Handle Doctor Prescription Download Link
+                        if (data.doctorPrescriptionFilename && data.id) {
+                            document.getElementById('prescriptionFilename').innerText = data.doctorPrescriptionFilename;
+                            document.getElementById('downloadPrescriptionLink').href = `/downloadFile/${data.id}/prescription`;
+                            document.getElementById('prescriptionDownloadSection').style.display = 'block';
+                        }
+
+                        // Handle Insurance Policy Download Link
+                        if (data.insurancePolicyFilename && data.id) {
+                            document.getElementById('insuranceFilename').innerText = data.insurancePolicyFilename;
+                            document.getElementById('downloadInsuranceLink').href = `/downloadFile/${data.id}/insurance`;
+                            document.getElementById('insuranceDownloadSection').style.display = 'block';
+                        }
+
+                        searchResultsDiv.style.display = 'block';
+                    } else {
+                        alert('No record found matching the criteria.');
+                    }
+                } else {
+                    const errorText = await response.text();
+                    alert(`Error searching record: ${errorText}`);
+                }
+            } catch (error) {
+                console.error('Error during search:', error);
+                alert('An error occurred while searching for the record.');
+            }
+        }
+    </script>
+</body>
+</html>

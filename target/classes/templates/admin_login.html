@@ -1,0 +1,107 @@
+<!-- MultipleFiles/admin_login.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Login</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            width: 350px;
+            text-align: center;
+        }
+
+/* Background Image Overlay - Consider a subtle medical pattern or abstract image */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('./images/admin.jpg') no-repeat center center; /* Updated background image */
+            background-size: cover;
+            opacity: 0.50; /* Even more subtle blend */
+            z-index: -1;
+        }
+
+        h1 {
+            color: #2e86ab;
+            margin-bottom: 30px;
+        }
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 8px;
+            color: #333333;
+            font-weight: 600;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #dce3e9;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #2e86ab;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #276f8d;
+        }
+        .error-message {
+            color: #d9534f;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .logout-message {
+            color: #5cb85c;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <h1>Admin Login</h1>
+    <div th:if="${param.error}" class="error-message">
+        Invalid username or password.
+    </div>
+    <div th:if="${param.logout}" class="logout-message">
+        You have been logged out.
+    </div>
+    <form th:action="@{/admin/login}" method="post">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">Login</button>
+    </form>
+</div>
+</body>
+</html>

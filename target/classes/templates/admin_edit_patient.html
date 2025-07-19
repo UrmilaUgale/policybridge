@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Patient Record</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts - Roboto for a clean look -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* General Body and Background */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #eef2f5; /* Very light blue-gray background */
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Background Image Overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('./images/adminedit.jpg') no-repeat center center, #eef2f5; /* Updated background image with fallback */
+            background-size: cover;
+            opacity: 0.50; /* Even more subtle blend */
+            z-index: -1;
+        }
+
+        /* Header Section - Copied from index.html */
+        .header-container {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 900px; /* Increased max-width for a wider layout */
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e0e0e0;
+        }
+
+        .hospital-logo {
+            max-width: 180px; /* Slightly larger logo */
+            margin-bottom: 15px;
+            display: block; /* Ensure it takes its own line */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            color: #004085; /* Darker blue for main titles */
+            font-size: 2.8em;
+            margin-bottom: 8px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        h3 {
+            color: #0056b3; /* Medium blue for subtitles */
+            font-size: 1.3em;
+            margin-top: 0;
+            font-weight: 500;
+        }
+
+        hr {
+            border: 0;
+            height: 2px; /* Thicker HR */
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0), #007bff, rgba(0, 0, 0, 0));
+            margin: 25px 0;
+        }
+
+        /* Form Styling - Copied from index.html */
+        form {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            max-width: 900px; /* Matches header width */
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #d0d0d0;
+        }
+
+        /* Fieldset for sections - Copied from index.html */
+        fieldset {
+            border: 1px solid #cce5ff; /* Light blue border for sections */
+            border-radius: 10px;
+            padding: 25px 30px;
+            margin-bottom: 35px;
+            background-color: #f8faff; /* Very light blue background for sections */
+            position: relative; /* For potential section icons */
+        }
+
+        legend {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #004085;
+            padding: 5px 20px;
+            margin-left: 10px;
+            background-color: #e0f2ff; /* Lighter blue background for legend */
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid #aed6f1;
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Space between icon and text */
+        }
+
+        legend i {
+            color: #007bff; /* Icon color */
+            font-size: 1.1em;
+        }
+
+        /* Form Groups and Rows - Copied from index.html */
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px; /* Increased gap */
+            margin-bottom: 20px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            min-width: 250px; /* Adjusted min-width for more flexibility */
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+            font-size: 0.95em;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        input[type="date"],
+        input[type="tel"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d0d0d0;
+            border-radius: 8px; /* More rounded corners */
+            box-sizing: border-box;
+            font-size: 1em;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background-color: #fdfdfd;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus,
+        input[type="date"]:focus,
+        input[type="tel"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.2); /* Softer shadow */
+            outline: none;
+        }
+
+        textarea {
+            min-height: 90px; /* Slightly taller textarea */
+            resize: vertical;
+        }
+
+        /* Radio and Checkbox Styling - Copied from index.html */
+        .radio-group, .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px; /* Increased gap */
+            margin-top: 10px;
+        }
+
+        .radio-group label, .checkbox-group label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0;
+            font-weight: 400;
+            cursor: pointer;
+            color: #444;
+        }
+
+        .radio-group input[type="radio"], .checkbox-group input[type="checkbox"] {
+            margin-right: 8px;
+            width: auto;
+            transform: scale(1.1); /* Slightly larger radio/checkbox */
+        }
+
+        /* Buttons - Copied from index.html */
+        .form-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px; /* Increased gap */
+            margin-top: 40px;
+        }
+
+        button {
+            padding: 14px 30px; /* Larger buttons */
+            border: none;
+            border-radius: 10px; /* More rounded buttons */
+            font-size: 1.15em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button[type="submit"] {
+            background-color: #28a745; /* Green for submit */
+            color: white;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .cancel-button { /* Specific style for cancel button */
+            background-color: #6c757d; /* Gray for reset */
+            color: white;
+        }
+
+        .cancel-button:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Specific adjustments for the "Referred by Dr." field */
+        .referred-by-dr-group {
+            display: flex;
+            align-items: center;
+            gap: 15px; /* Increased gap */
+            margin-bottom: 25px;
+            background-color: #e9f7ff; /* Light blue background for this specific field */
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 1px solid #b3e0ff;
+        }
+        .referred-by-dr-group label {
+            margin-bottom: 0;
+            white-space: nowrap;
+            font-weight: 600;
+            color: #0056b3;
+        }
+        .referred-by-dr-group input {
+            flex-grow: 1;
+            border: none;
+            border-bottom: 2px solid #aed6f1; /* Thicker, colored bottom border */
+            border-radius: 0;
+            padding: 5px 0;
+            background-color: transparent; /* Transparent background */
+        }
+        .referred-by-dr-group input:focus {
+            border-bottom-color: #007bff;
+            box-shadow: none;
+        }
+
+        /* Adjustments for inline labels and inputs */
+        .inline-label-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px; /* Added margin for spacing */
+        }
+        .inline-label-input label {
+            margin-bottom: 0;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+        .inline-label-input input {
+            flex-grow: 1;
+            border: none;
+            border-bottom: 1px solid #ccc;
+            border-radius: 0;
+            padding: 5px 0;
+            background-color: transparent;
+        }
+        .inline-label-input input:focus {
+            border-bottom-color: #007bff;
+            box-shadow: none;
+        }
+
+        /* Document Uploads section specific styling */
+        .document-link {
+            display: inline-block;
+            margin-left: 10px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .document-link:hover {
+            text-decoration: underline;
+        }
+        .document-status {
+            font-style: italic;
+            color: #666;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="header-container">
+    <img src="./images/adminedit.jpg" alt="Admin Panel Logo" class="hospital-logo">
+    <h1>Edit Patient Record (ID: <span th:text="${patient.id}"></span>)</h1>
+    <h3>Admin Panel</h3>
+    <hr>
+</div>
+
+<form th:action="@{/admin/save}" th:object="${patient}" method="post">
+    <input type="hidden" th:field="*{id}" />
+
+    <fieldset>
+        <legend><i class="fas fa-user-shield"></i> Admin Controls</legend>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="status">Status:</label>
+                <select id="status" th:field="*{status}">
+                    <option th:each="statusOption : ${statusOptions}" th:value="${statusOption}" th:text="${statusOption}"></option>
+                </select>
+            </div>
+            <div class="form-group" style="flex: 2;"> <!-- Allow comments to take more space -->
+                <label for="adminComments">Admin Comments:</label>
+                <textarea id="adminComments" th:field="*{adminComments}"></textarea>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend><i class="fas fa-user"></i> Patient Details</legend>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="patientName">Patient Name:</label>
+                <input type="text" id="patientName" th:field="*{patientName}" />
+            </div>
+            <div class="form-group">
+                <label for="surname">Surname:</label>
+                <input type="text" id="surname" th:field="*{surname}" />
+            </div>
+            <div class="form-group">
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" th:field="*{firstName}" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="husbandFatherName">Husband's / Father's Name:</label>
+                <input type="text" id="husbandFatherName" th:field="*{husbandFatherName}" />
+            </div>
+            <div class="form-group">
+                <label for="age">Age:</label>
+                <input type="number" id="age" th:field="*{age}" />
+            </div>
+            <div class="form-group">
+                <label for="dateOfBirth">Date of Birth:</label>
+                <input type="date" id="dateOfBirth" th:field="*{dateOfBirth}" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="patientAddress">Patient's Address:</label>
+            <input type="text" id="patientAddress" th:field="*{patientAddress}" />
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" th:field="*{phone}" />
+            </div>
+            <div class="form-group">
+                <label for="occupation">Occupation:</label>
+                <input type="text" id="occupation" th:field="*{occupation}" />
+            </div>
+            <div class="form-group">
+                <label for="designation">Designation:</label>
+                <input type="text" id="designation" th:field="*{designation}" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="nameOfOrganization">Name of Organization / Co.:</label>
+            <input type="text" id="nameOfOrganization" th:field="*{nameOfOrganization}" />
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Patient Category:</label><br>
+                <div class="radio-group">
+                    <label><input type="radio" id="patientCategoryHospital" name="patientCategory" value="hospital_patient" th:field="*{patientCategory}" disabled /> Hospital Patient</label>
+                    <label><input type="radio" id="patientCategoryPrivate" name="patientCategory" value="private_patient" th:field="*{patientCategory}" disabled /> Private Patient</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="nameOfDoctor">Name of Doctor:</label>
+                <input type="text" id="nameOfDoctor" th:field="*{nameOfDoctor}" />
+            </div>
+            <div class="form-group">
+                <label>Gender:</label><br>
+                <div class="radio-group">
+                    <label><input type="radio" id="genderMale" name="gender" value="male" th:field="*{gender}" disabled /> Male</label>
+                    <label><input type="radio" id="genderFemale" name="gender" value="female" th:field="*{gender}" disabled /> Female</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Room Preference:</label><br>
+            <div class="radio-group">
+                <label><input type="radio" id="roomPreferencegeneral_ward" name="roomPreferencegw" value="general_ward" th:field="*{roomPreference}" /> General Ward</label>
+                <label><input type="radio" id="roomPreferencesemi_private" name="roomPreferencesp" value="semi_private" th:field="*{roomPreference}" /> Semi Pvt Ward</label>
+                <label><input type="radio" id="roomPreferenceprivate_room" name="roomPreferencepr" value="private_room" th:field="*{roomPreference}" /> Private Room</label>
+                <label><input type="radio" id="roomPreferencesuite" name="roomPreferenceSU" value="suite" th:field="*{roomPreference}" /> Suite</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="opdRegistrationNo">OPD Registration No.:</label>
+            <input type="text" id="opdRegistrationNo" th:field="*{opdRegistrationNo}" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend><i class="fas fa-id-card"></i> Emergency Contact & Identification</legend>
+        <div class="form-group">
+            <label for="relativesNameAddress">Relatives Name & Address:</label>
+            <input type="text" id="relativesNameAddress" th:field="*{relativesNameAddress}" />
+        </div>
+        <div class="form-group">
+            <label for="relativesPhone">Relatives Phone:</label>
+            <input type="tel" id="relativesPhone" th:field="*{relativesPhone}" />
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="pan">PAN:</label>
+                <input type="text" id="pan" th:field="*{pan}" />
+            </div>
+            <div class="form-group">
+                <label for="aadhar">Aadhar:</label>
+                <input type="text" id="aadhar" th:field="*{aadhar}" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="diagnosis">Diagnosis:</label>
+            <input type="text" id="diagnosis" th:field="*{diagnosis}" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend><i class="fas fa-shield-alt"></i> Insurance Details</legend>
+        <div class="form-group">
+            <label for="medicalInsurance">Medical Insurance:</label>
+            <input type="text" id="medicalInsurance" th:field="*{medicalInsurance}" />
+        </div>
+        <div class="form-group">
+            <label for="insuranceCompany">Insurance Company:</label>
+            <input type="text" id="insuranceCompany" th:field="*{insuranceCompany}" />
+        </div>
+        <div class="form-group">
+            <label for="policyNo">Policy No.:</label>
+            <input type="text" id="policyNo" th:field="*{policyNo}" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend><i class="fas fa-upload"></i> Uploaded Documents</legend>
+        <div class="form-group">
+            <label>Aadhar Card:</label>
+            <span th:if="${patient.aadharCardFilename}">
+                    <span th:text="${patient.aadharCardFilename}"></span>
+                    <a th:href="@{/downloadFile/{id}/aadhar(id=${patient.id})}" target="_blank" class="document-link">Download</a>
+                </span>
+            <span th:unless="${patient.aadharCardFilename}" class="document-status">No Aadhar Card uploaded.</span>
+        </div>
+
+        <div class="form-group">
+            <label>Doctor's Prescription:</label>
+            <span th:if="${patient.doctorPrescriptionFilename}">
+                    <span th:text="${patient.doctorPrescriptionFilename}"></span>
+                    <a th:href="@{/downloadFile/{id}/prescription(id=${patient.id})}" target="_blank" class="document-link">Download</a>
+                </span>
+            <span th:unless="${patient.doctorPrescriptionFilename}" class="document-status">No Doctor's Prescription uploaded.</span>
+        </div>
+
+        <div class="form-group">
+            <label>Insurance Policy:</label>
+            <span th:if="${patient.insurancePolicyFilename}">
+                    <span th:text="${patient.insurancePolicyFilename}"></span>
+                    <a th:href="@{/downloadFile/{id}/insurance(id=${patient.id})}" target="_blank" class="document-link">Download</a>
+                </span>
+            <span th:unless="${patient.insurancePolicyFilename}" class="document-status">No Insurance Policy uploaded.</span>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend><i class="fas fa-file-signature"></i> Undertaking</legend>
+        <div class="form-group inline-label-input">
+            <label for="mrMrs">I Mr. / Mrs.</label>
+            <input type="text" id="mrMrs" th:field="*{mrMrs}" />
+        </div>
+        <div class="form-group inline-label-input">
+            <label>relative of the patient Mr. / Mrs. / Ms / Baby:</label>
+            <input type="text" id="relativeOfPatient" th:field="*{relativeOfPatient}" />
+        </div>
+        <div class="form-group inline-label-input">
+            <label for="bedNo">Bed No.</label>
+            <input type="text" id="bedNo" th:field="*{bedNo}" style="width: 80px;" />
+            <label>undertake to pay the total amount of his/her treatment which is</label>
+        </div>
+        <div class="form-group inline-label-input">
+            <label>Rs.</label>
+            <input type="number" step="0.01" id="undertakingAmount" th:field="*{undertakingAmount}" style="width: 120px;" />
+            <label>by</label>
+            <input type="date" id="paymentDueDate" th:field="*{paymentDueDate}" />
+            <label>before 12.00 noon:</label>
+        </div>
+        <div class="form-group">
+            <label for="nameUndertaking">Name:</label>
+            <input type="text" id="nameUndertaking" th:field="*{nameUndertaking}" />
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="signatureUndertaking">Signature:</label>
+                <input type="text" id="signatureUndertaking" th:field="*{signatureUndertaking}" />
+            </div>
+            <div class="form-group">
+                <label for="dateUndertaking">Date (Undertaking):</label>
+                <input type="date" id="dateUndertaking" th:field="*{dateUndertaking}" />
+            </div>
+            <div class="form-group">
+                <label for="relationUndertaking">Relation (Undertaking):</label>
+                <input type="text" id="relationUndertaking" th:field="*{relationUndertaking}" />
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend><i class="fas fa-users"></i> Responsible Persons & Payment</legend>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="responsibleName1">Responsible Person 1 Name:</label>
+                <input type="text" id="responsibleName1" th:field="*{responsibleName1}" />
+            </div>
+            <div class="form-group">
+                <label for="responsibleSign1">Responsible Person 1 Sign:</label>
+                <input type="text" id="responsibleSign1" th:field="*{responsibleSign1}" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="responsibleMobile1">Responsible Person 1 Mobile:</label>
+                <input type="tel" id="responsibleMobile1" th:field="*{responsibleMobile1}" />
+            </div>
+            <div class="form-group">
+                <label for="responsibleEmail1">Responsible Person 1 Email:</label>
+                <input type="email" id="responsibleEmail1" th:field="*{responsibleEmail1}" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="responsibleName2">Responsible Person 2 Name:</label>
+                <input type="text" id="responsibleName2" th:field="*{responsibleName2}" />
+            </div>
+            <div class="form-group">
+                <label for="responsibleSign2">Responsible Person 2 Sign:</label>
+                <input type="text" id="responsibleSign2" th:field="*{responsibleSign2}" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="responsibleMobile2">Responsible Person 2 Mobile:</label>
+                <input type="tel" id="responsibleMobile2" th:field="*{responsibleMobile2}" />
+            </div>
+            <div class="form-group">
+                <label for="responsibleEmail2">Responsible Person 2 Email:</label>
+                <input type="email" id="responsibleEmail2" th:field="*{responsibleEmail2}" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="totalAmountPaid">Total Amount Paid:</label>
+                <input type="number" step="0.01" id="totalAmountPaid" th:field="*{totalAmountPaid}" />
+            </div>
+            <div class="form-group">
+                <label for="noDepositReason">No Deposit Reason:</label>
+                <textarea id="noDepositReason" th:field="*{noDepositReason}"></textarea>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="nameOfCounsellor">Name of Counsellor:</label>
+                <input type="text" id="nameOfCounsellor" th:field="*{nameOfCounsellor}" />
+            </div>
+            <div class="form-group">
+                <label for="signCounsellor">Sign Counsellor:</label>
+                <input type="text" id="signCounsellor" th:field="*{signCounsellor}" />
+            </div>
+        </div>
+    </fieldset>
+
+    <div class="form-buttons">
+        <button type="submit"><i class="fas fa-save"></i> Save Changes</button>
+        <button type="button" class="cancel-button" onclick="window.location.href='/admin/dashboard'"><i class="fas fa-times-circle"></i> Cancel</button>
+    </div>
+</form>
+</body>
+</html>

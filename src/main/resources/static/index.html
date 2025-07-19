@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Admission Form - [Your Hospital Name]</title>
+    <!-- Google Fonts - Roboto for a clean look -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons (Optional, but highly recommended for UI images/icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google reCAPTCHA API -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+    <style>
+        /* General Body and Background */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #eef2f5; /* Very light blue-gray background */
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Background Image Overlay - Consider a subtle medical pattern or abstract image */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('./images/index.jpg') no-repeat center center; /* Updated background image */
+            background-size: cover;
+            opacity: 0.50; /* Even more subtle blend */
+            z-index: -1;
+        }
+
+        /* Header Section */
+        .header-container {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 900px; /* Increased max-width for a wider layout */
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e0e0e0;
+        }
+
+        .hospital-logo {
+            max-width: 180px; /* Slightly larger logo */
+            margin-bottom: 15px;
+            display: block; /* Ensure it takes its own line */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            color: #004085; /* Darker blue for main titles */
+            font-size: 2.8em;
+            margin-bottom: 8px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        h3 {
+            color: #0056b3; /* Medium blue for subtitles */
+            font-size: 1.3em;
+            margin-top: 0;
+            font-weight: 500;
+        }
+
+        hr {
+            border: 0;
+            height: 2px; /* Thicker HR */
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0), #007bff, rgba(0, 0, 0, 0));
+            margin: 25px 0;
+        }
+
+        /* Form Styling */
+        form {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            max-width: 900px; /* Matches header width */
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #d0d0d0;
+        }
+
+        /* Fieldset for sections */
+        fieldset {
+            border: 1px solid #cce5ff; /* Light blue border for sections */
+            border-radius: 10px;
+            padding: 25px 30px;
+            margin-bottom: 35px;
+            background-color: #f8faff; /* Very light blue background for sections */
+            position: relative; /* For potential section icons */
+        }
+
+        legend {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #004085;
+            padding: 5px 20px;
+            margin-left: 10px;
+            background-color: #e0f2ff; /* Lighter blue background for legend */
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid #aed6f1;
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Space between icon and text */
+        }
+
+        legend i {
+            color: #007bff; /* Icon color */
+            font-size: 1.1em;
+        }
+
+        /* Form Groups and Rows */
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px; /* Increased gap */
+            margin-bottom: 20px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            min-width: 250px; /* Adjusted min-width for more flexibility */
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+            font-size: 0.95em;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        input[type="date"],
+        input[type="tel"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d0d0d0;
+            border-radius: 8px; /* More rounded corners */
+            box-sizing: border-box;
+            font-size: 1em;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background-color: #fdfdfd;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus,
+        input[type="date"]:focus,
+        input[type="tel"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.2); /* Softer shadow */
+            outline: none;
+        }
+
+        textarea {
+            min-height: 90px; /* Slightly taller textarea */
+            resize: vertical;
+        }
+
+        /* Radio and Checkbox Styling */
+        .radio-group, .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px; /* Increased gap */
+            margin-top: 10px;
+        }
+
+        .radio-group label, .checkbox-group label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0;
+            font-weight: 400;
+            cursor: pointer;
+            color: #444;
+        }
+
+        .radio-group input[type="radio"], .checkbox-group input[type="checkbox"] {
+            margin-right: 8px;
+            width: auto;
+            transform: scale(1.1); /* Slightly larger radio/checkbox */
+        }
+        /* Added CSS for mandatory asterisk */
+        .required:after {
+            content: " *";
+            color: red;
+        }
+
+        /* File Uploads */
+        input[type="file"] {
+            padding: 10px;
+            border: 1px solid #d0d0d0;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+
+        /* Undertaking Specific Styles */
+        .undertaking-text {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 15px;
+            background-color: #fff3cd; /* Light yellow background for notes */
+            border: 1px solid #ffeeba;
+            border-radius: 8px;
+            padding: 15px;
+            line-height: 1.5;
+        }
+
+        /* Buttons */
+        .form-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px; /* Increased gap */
+            margin-top: 40px;
+        }
+
+        button {
+            padding: 14px 30px; /* Larger buttons */
+            border: none;
+            border-radius: 10px; /* More rounded buttons */
+            font-size: 1.15em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button[type="submit"] {
+            background-color: #28a745; /* Green for submit */
+            color: white;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        button[type="reset"] {
+            background-color: #6c757d; /* Gray for reset */
+            color: white;
+        }
+
+        button[type="reset"]:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Utility Classes */
+        .text-center {
+            text-align: center;
+        }
+
+        /* Specific adjustments for the "Referred by Dr." field */
+        .referred-by-dr-group {
+            display: flex;
+            align-items: center;
+            gap: 15px; /* Increased gap */
+            margin-bottom: 25px;
+            background-color: #e9f7ff; /* Light blue background for this specific field */
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 1px solid #b3e0ff;
+        }
+        .referred-by-dr-group label {
+            margin-bottom: 0;
+            white-space: nowrap;
+            font-weight: 600;
+            color: #0056b3;
+        }
+        .referred-by-dr-group input {
+            flex-grow: 1;
+            border: none;
+            border-bottom: 2px solid #aed6f1; /* Thicker, colored bottom border */
+            border-radius: 0;
+            padding: 5px 0;
+            background-color: transparent; /* Transparent background */
+        }
+        .referred-by-dr-group input:focus {
+            border-bottom-color: #007bff;
+            box-shadow: none;
+        }
+
+        /* Adjustments for inline labels and inputs */
+        .inline-label-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px; /* Added margin for spacing */
+        }
+        .inline-label-input label {
+            margin-bottom: 0;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+        .inline-label-input input {
+            flex-grow: 1;
+            border: none;
+            border-bottom: 1px solid #ccc;
+            border-radius: 0;
+            padding: 5px 0;
+            background-color: transparent;
+        }
+        .inline-label-input input:focus {
+            border-bottom-color: #007bff;
+            box-shadow: none;
+        }
+
+        /* Specific style for the success message after submission */
+        .success-message-container {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            padding: 18px; /* Larger padding */
+            border-radius: 10px; /* More rounded */
+            margin-top: 30px; /* More space */
+            text-align: center;
+            font-size: 1.2em; /* Larger font */
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+        .success-message-container a {
+            color: #0f5132;
+            text-decoration: underline;
+            font-weight: 700;
+        }
+        .success-message-container a:hover {
+            color: #0a3622;
+        }
+
+        /* Simple CAPTCHA styling */
+        #captcha-question {
+            font-weight: bold;
+            color: #004085;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="header-container">
+        <!-- Consider a more elaborate header with hospital name, address, contact info -->
+        <img src="/images/index.jpg" alt="[Your Hospital Name] Logo" class="hospital-logo">
+        <h1>PATIENT ADMISSION FORM</h1>
+        <h3>(Hospital Registration)</h3>
+        <hr>
+    </div>
+
+    <form id="patientAdmissionForm" method="POST" action="/admitPatient" enctype="multipart/form-data">
+
+        <div class="referred-by-dr-group">
+            <label for="referred_by_dr"><i class="fas fa-user-md"></i> Referred by Dr.:</label>
+            <input type="text" id="referred_by_dr" name="referredByDr" placeholder="e.g., Dr. John Doe">
+        </div>
+
+        <fieldset>
+            <legend><i class="fas fa-info-circle"></i> Patient Type & Basic Information</legend>
+
+            <div class="form-group">
+                <label class="required">PATIENT TYPE:</label>
+                <div class="radio-group">
+                    <label><input type="radio" id="casualty" name="patientType" value="Casualty" required> CASUALTY</label>
+                    <label><input type="radio" id="direct" name="patientType" value="Direct" checked required> DIRECT</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="patient_name" class="required">PATIENT'S FULL NAME:</label>
+                <input type="text" id="patient_name" name="patientName" placeholder="Enter full name" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="surname" class="required">Surname:</label>
+                    <input type="text" id="surname" name="surname" placeholder="e.g., Smith" required>
+                </div>
+                <div class="form-group">
+                    <label for="first_name" class="required">First Name:</label>
+                    <input type="text" id="first_name" name="firstName" placeholder="e.g., Jane" required>
+                </div>
+                <div class="form-group">
+                    <label for="husband_father_name">Husband's / Father's Name:</label>
+                    <input type="text" id="husband_father_name" name="husbandFatherName" placeholder="e.g., John Smith">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="patient_address" class="required">Patient's Address:</label>
+                <textarea id="patient_address" name="patientAddress" rows="3" placeholder="Street, City, State, Zip Code" required></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="age" class="required">Age:</label>
+                    <input type="number" id="age" name="age" min="0" max="150" placeholder="e.g., 35" required>
+                </div>
+                <div class="form-group">
+                    <label for="date_of_birth" class="required">Date of Birth:</label>
+                    <input type="date" id="date_of_birth" name="dateOfBirth" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone" class="required">Phone:</label>
+                    <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" title="Phone number must be 10 digits" placeholder="e.g., 9876543210" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="occupation">Occupation:</label>
+                    <input type="text" id="occupation" name="occupation" placeholder="e.g., Engineer">
+                </div>
+                <div class="form-group">
+                    <label for="name_of_organization">Name of Organization / Co.:</label>
+                    <input type="text" id="name_of_organization" name="nameOfOrganization" placeholder="e.g., Tech Solutions Inc.">
+                </div>
+                <div class="form-group">
+                    <label for="designation">Designation:</label>
+                    <input type="text" id="designation" name="designation" placeholder="e.g., Senior Developer">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="required">Category:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="patientCategory" value="hospital_patient" required> Hospital Patient</label>
+                        <label><input type="radio" name="patientCategory" value="private_patient" checked required> Private Patient</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="name_of_doctor" class="required">Name of Doctor:</label>
+                    <input type="text" id="name_of_doctor" name="nameOfDoctor" placeholder="e.g., Dr. Emily White" required>
+                </div>
+                <div class="form-group">
+                    <label class="required">SEX:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" id="male" name="gender" value="male" required> Male</label>
+                        <label><input type="radio" id="female" name="gender" value="female" required> Female</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="required">Room Preference:</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="roomPreference" value="general_ward" checked required> General Ward</label>
+                    <label><input type="radio" name="roomPreference" value="semi_private" required> Semi-Private Room</label>
+                    <label><input type="radio" name="roomPreference" value="private_room" required> Private Room</label>
+                    <label><input type="radio" name="roomPreference" value="suite" required> Suite</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="opd_registration_no">OPD Registration No. (If any):</label>
+                <input type="text" id="opd_registration_no" name="opdRegistrationNo" placeholder="e.g., OPD12345">
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend><i class="fas fa-id-card"></i> Emergency Contact & Identification</legend>
+            <div class="form-group">
+                <label for="relatives_name_address">Relatives Name & Address:</label>
+                <textarea id="relatives_name_address" name="relativesNameAddress" rows="2" placeholder="Name, Relationship, Address"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="relatives_phone">Relatives Phone:</label>
+                <input type="tel" id="relatives_phone" name="relativesPhone" pattern="[0-9]{10}" title="Phone number must be 10 digits" placeholder="e.g., 9876543210">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pan">PAN:</label>
+                    <input type="text" id="pan" name="pan" maxlength="10" placeholder="Enter PAN Number"
+                           pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
+                           title="PAN must be 10 characters: 5 uppercase letters, 4 digits, 1 uppercase letter"
+                           required>
+                </div>
+                <div class="form-group">
+                    <label for="aadhar">Aadhar Card:</label>
+                    <input type="text" id="aadhar" name="aadhar" maxlength="12" placeholder="Enter Aadhar Number"
+                           pattern="\d{12}"
+                           title="Aadhar must be exactly 12 digits"
+                           required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="diagnosis">Diagnosis:</label>
+                <input type="text" id="diagnosis" name="diagnosis" placeholder="e.g., Acute Appendicitis">
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend><i class="fas fa-shield-alt"></i> 	Insurance Details</legend>
+            <div class="form-group">
+                <label class="required">Do you have Medical Insurance?</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="medicalInsurance" value="yes" onclick="toggleInsurance(true)" required> Yes</label>
+                    <label><input type="radio" name="medicalInsurance" value="no" onclick="toggleInsurance(false)" checked required> No</label>
+                </div>
+            </div>
+
+            <div class="form-group" id="insuranceDetails" style="display: none;">
+                <label for="insurance_company">If Yes, Name of Insurance Company & T.P.A.:</label>
+                <input type="text" id="insurance_company" name="insuranceCompany" placeholder="e.g., HealthGuard Insurance">
+            </div>
+
+            <div class="form-group" id="policynos" style="display: none;">
+                <label for="policy_no">Policy No.:</label>
+                <input type="text" id="policy_no" name="policyNo" placeholder="e.g., HGGTD3456T">
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend><i class="fas fa-upload"></i> Document Uploads</legend>
+            <div class="form-group">
+                <label for="aadharCardFile">Upload Aadhar Card:</label>
+                <input type="file" id="aadharCardFile" name="aadharCardFile" accept=".pdf,.jpg,.jpeg,.png">
+            </div>
+            <div class="form-group">
+                <label for="doctorPrescriptionFile">Upload Doctor's Prescription/Reference Letter:</label>
+                <input type="file" id="doctorPrescriptionFile" name="doctorPrescriptionFile" accept=".pdf,.jpg,.jpeg,.png">
+            </div>
+            <div class="form-group">
+                <label for="insurancePolicyFile">Upload Insurance Policy:</label>
+                <input type="file" id="insurancePolicyFile" name="insurancePolicyFile" accept=".pdf,.jpg,.jpeg,.png">
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend><i class="fas fa-file-signature"></i> Undertaking for Payment</legend>
+            <p class="undertaking-text">
+                <strong>Important Note:</strong> Kindly ask the patient to deposit the total estimated amount with the cashier.
+                If the patient is not in a position to pay the entire amount, kindly get the undertaking signed.
+                In these cases, collect only the admission deposit as per room category.
+                Also verify the estimate with the estimate section of the billing department.
+            </p>
+
+            <div class="form-group inline-label-input">
+                <label for="mr_mrs">I Mr. / Mrs.</label>
+                <input type="text" id="mr_mrs" name="mrMrs" placeholder="Full Name">
+            </div>
+
+            <div class="form-group inline-label-input">
+                <label>relative of the patient Mr. / Mrs. / Ms / Baby:</label>
+                <input type="text" id="relative_of_patient" name="relativeOfPatient" placeholder="Patient's Name">
+            </div>
+
+            <div class="form-group inline-label-input">
+                <label for="bed_no">Bed No.</label>
+                <input type="text" id="bed_no" name="bedNo" style="width: 80px;" placeholder="e.g., A101">
+                <label>undertake to pay the total amount of his/her treatment which is</label>
+            </div>
+
+            <div class="form-group inline-label-input">
+                <label>Rs.</label>
+                <input type="text" id="undertaking_amount" name="undertakingAmount" style="width: 120px;" placeholder="e.g., 50000.00">
+                <label>by</label>
+                <input type="date" id="payment_due_date" name="paymentDueDate">
+                <label>before 12.00 noon:</label>
+            </div>
+
+            <p class="undertaking-text">
+                Kindly admit the patient and continue the treatment. Amount will be deposited within 24 hrs of admission.
+                We also undertake the responsibility to pay the complete bill, in case there is a variation in estimated amount due to the change in line of treatment.
+            </p>
+
+            <div class="form-group">
+                <label for="name_undertaking">Name:</label>
+                <input type="text" id="name_undertaking" name="nameUndertaking" placeholder="Name of person undertaking">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="signature_undertaking">Signature:</label>
+                    <input type="text" id="signature_undertaking" name="signatureUndertaking" placeholder="Signature (or typed name if digital)">
+                </div>
+                <div class="form-group">
+                    <label for="date_undertaking">Date:</label>
+                    <input type="date" id="date_undertaking" name="dateUndertaking">
+                </div>
+                <div class="form-group">
+                    <label for="relation_undertaking">Relation:</label>
+                    <input type="text" id="relation_undertaking" name="relationUndertaking" placeholder="e.g., Son, Daughter">
+                </div>
+            </div>
+
+            <p class="undertaking-text">
+                (If the patient is not aware of the estimate, kindly ask them to get in touch with the estimate section of billing department)
+            </p>
+        </fieldset>
+
+        <fieldset>
+            <legend><i class="fas fa-users"></i> Responsible Persons for Billing</legend>
+            <p>Responsible persons for paying the bills :</p>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="responsible_name_1">1. Name:</label>
+                    <input type="text" id="responsible_name_1" name="responsibleName1" placeholder="Full Name">
+                </div>
+                <div class="form-group">
+                    <label for="responsible_sign_1">Sign:</label>
+                    <input type="text" id="responsible_sign_1" name="responsibleSign1" placeholder="Signature (or typed name)">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="responsible_mobile_1">Mobile No.:</label>
+                    <input type="tel" id="responsible_mobile_1" name="responsibleMobile1" pattern="[0-9]{10}" title="Mobile number must be 10 digits" placeholder="e.g., 9876543210">
+                </div>
+                <div class="form-group">
+                    <label for="responsible_email_1">Email:</label>
+                    <input type="email" id="responsible_email_1" name="responsibleEmail1" placeholder="e.g., email@example.com">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="responsible_name_2">2. Name:</label>
+                    <input type="text" id="responsible_name_2" name="responsibleName2" placeholder="Full Name">
+                </div>
+                <div class="form-group">
+                    <label for="responsible_sign_2">Sign:</label>
+                    <input type="text" id="responsible_sign_2" name="responsibleSign2" placeholder="Signature (or typed name)">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="responsible_mobile_2">Mobile No.:</label>
+                    <input type="tel" id="responsible_mobile_2" name="responsibleMobile2" pattern="[0-9]{10}" title="Mobile number must be 10 digits" placeholder="e.g., 9876543210">
+                </div>
+                <div class="form-group">
+                    <label for="responsible_email_2">Email:</label>
+                    <input type="email" id="responsible_email_2" name="responsibleEmail2" placeholder="e.g., email@example.com">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="total_amount_paid">Total Amount Paid:</label>
+                    <input type="number" step="0.01" id="total_amount_paid" name="totalAmountPaid" placeholder="e.g., 10000.00">
+                </div>
+                <div class="form-group">
+                    <label for="no_deposit_reason">If no deposit reason:</label>
+                    <textarea id="no_deposit_reason" name="noDepositReason" rows="2" placeholder="Reason for no deposit"></textarea>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name_of_counsellor">Name of the counsellor:</label>
+                    <input type="text" id="name_of_counsellor" name="nameOfCounsellor" placeholder="e.g., Sarah Connor">
+                </div>
+                <div class="form-group">
+                    <label for="sign_counsellor">Sign:</label>
+                    <input type="text" id="sign_counsellor" name="signCounsellor" placeholder="Signature (or typed name)">
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Simple Math CAPTCHA -->
+        <div class="form-group">
+            <label class="required">Security Check: What is <span id="captcha-question"></span>?</label>
+            <input type="text" id="captcha-answer" name="captchaAnswer" placeholder="Enter answer" required>
+            <span id="captcha-error" style="color:red;display:none;">Incorrect answer. Please try again.</span>
+        </div>
+
+
+        <div class="form-buttons">
+            <button type="submit"><i class="fas fa-paper-plane"></i> Submit Admission</button>
+            <button type="reset"><i class="fas fa-redo"></i> Clear Form</button>
+        </div>
+    </form>
+
+    <script>
+        function toggleInsurance(show) {
+            const detailsDiv = document.getElementById("insuranceDetails");
+            const detailsDiv1 = document.getElementById("policynos");
+            detailsDiv.style.display = show ? "block" : "none";
+	   detailsDiv1.style.display = show ? "block" : "none";
+        }
+
+        // Simple Math CAPTCHA implementation
+        function generateCaptcha() {
+            const num1 = Math.floor(Math.random() * 10);
+            const num2 = Math.floor(Math.random() * 10);
+            document.getElementById('captcha-question').textContent = `${num1} + ${num2}`;
+            return num1 + num2;
+        }
+
+        let correctAnswer = generateCaptcha();
+
+        document.getElementById('patientAdmissionForm').addEventListener('submit', function(event) {
+            const userAnswer = parseInt(document.getElementById('captcha-answer').value);
+            const errorElement = document.getElementById('captcha-error');
+            
+            if (userAnswer !== correctAnswer) {
+                event.preventDefault();
+                errorElement.style.display = 'inline';
+                correctAnswer = generateCaptcha();
+                document.getElementById('captcha-answer').value = '';
+            } else {
+                errorElement.style.display = 'none';
+            }
+        });
+
+        // Optional: Display success message from backend
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const successMessage = urlParams.get('successMessage');
+            if (successMessage) {
+                const formElement = document.getElementById('patientAdmissionForm');
+                const messageContainer = document.createElement('div');
+                messageContainer.className = 'success-message-container';
+                messageContainer.innerHTML = decodeURIComponent(successMessage);
+                formElement.parentNode.insertBefore(messageContainer, formElement.nextSibling);
+                // Clear form after successful submission
+                formElement.reset();
+            }
+        });
+    </script>
+</body>
+</html>
